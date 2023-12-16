@@ -15,6 +15,8 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
 
+
+
 class MapboxMapController(
   context: Context,
   mapInitOptions: MapInitOptions,
@@ -44,8 +46,11 @@ class MapboxMapController(
   private val compassController = CompassController(mapView)
 
   private val proxyBinaryMessenger = ProxyBinaryMessenger(messenger, "/map_$channelSuffix")
+  private val localHttpService: LocalHttpService?
 
   init {
+    print("******** Initializing mapbox controller ******\n")
+    localHttpService = getLocalHttpService(context)
     changeUserAgent(pluginVersion)
     lifecycleProvider.getLifecycle()?.addObserver(this)
     FLTMapInterfaces.StyleManager.setup(proxyBinaryMessenger, styleController)
@@ -152,23 +157,9 @@ class MapboxMapController(
   }
 
   private fun changeUserAgent(version: String) {
-    HttpServiceFactory.getInstance().setInterceptor(
-      object : HttpServiceInterceptorInterface {
-        override fun onRequest(request: HttpRequest): HttpRequest {
-          request.headers[HttpHeaders.USER_AGENT] = "${request.headers[HttpHeaders.USER_AGENT]} Flutter Plugin/$version"
-          return request
-        }
-
-        override fun onDownload(download: DownloadOptions): DownloadOptions {
-          return download
-        }
-
-        override fun onResponse(response: HttpResponse): HttpResponse {
-          return response
-        }
-      }
-    )
+    HttpServiceFactory.getInstance().setInterceptor(localHttpService!!)
   }
 
   private fun getEventMethodName(eventType: String) = "event#$eventType"
 }
+
