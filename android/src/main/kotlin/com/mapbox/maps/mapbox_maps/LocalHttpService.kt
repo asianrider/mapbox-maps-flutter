@@ -136,9 +136,9 @@ class LocalHttpService(dir: String) : HttpServiceInterceptorInterface {
         val match = pattern.matchEntire(path)
         if (match != null) {
           val (mbtiles, zoom, col, row) = match.destructured
-          print("Found a match: $mbtiles/$zoom/$col/$row\n")
+        //  print("Found a match: $mbtiles/$zoom/$col/$row\n")
           val bytes = getTile(mbtiles, zoom.toInt(), col.toInt(), row.toInt(), false)
-          print("Got pbf tile of length: ${bytes.size}\n")
+        //  print("Got pbf tile of length: ${bytes.size}\n")
           val responseData = HttpResponseData(response.request.headers, 200, bytes)
           val exp: Expected<HttpRequestError, HttpResponseData> =
             ExpectedFactory.createValue(responseData)
@@ -148,7 +148,7 @@ class LocalHttpService(dir: String) : HttpServiceInterceptorInterface {
           val match = pattern.matchEntire(path)
           if (match != null) {
             val (mbtiles, zoom, col, row) = match.destructured
-            print("Found a match: $mbtiles/$zoom/$col/$row\n")
+           // print("Found a match: $mbtiles/$zoom/$col/$row\n")
             val bytes = getTile(mbtiles, zoom.toInt(), col.toInt(), row.toInt(), isRaster = true)
             print("Got png tile of length: ${bytes.size}\n")
             val responseData = HttpResponseData(response.request.headers, 200, bytes)
@@ -160,7 +160,7 @@ class LocalHttpService(dir: String) : HttpServiceInterceptorInterface {
             return response
           }
         }
-        print("Get tiles from ${path.substring(6, path.length)}\n")
+        // print("Get tiles from ${path.substring(6, path.length)}\n")
       } else {
         print("Local response for path: ${path}\n")
         val file = File(appDirectory + path)
@@ -176,7 +176,7 @@ class LocalHttpService(dir: String) : HttpServiceInterceptorInterface {
         }
       }
     } else {
-      print("Network response: ${response.request.url}\n")
+      // print("Network response: ${response.request.url}\n")
     }
     return response
   }
